@@ -1,7 +1,5 @@
 //
 //  main.c
-//  ProyectoIbero
-//
 //
 
 #include <stdio.h>
@@ -59,7 +57,56 @@ void altaAlumnos(){
     fclose(arch);
 }
 void situacion(char nombre[100]){
-    
+    FILE *arch;
+    arch=fopen("RegistroAlumnos.dat","rb");
+    registro_alumno alumno;
+    fread(&alumno, sizeof(registro_alumno), 1, arch);
+
+     while(!feof(arch) && *nombre!=*alumno.nombre)
+    {
+        fread(&alumno, sizeof(registro_alumno), 1, arch);
+    }
+
+    double prom_materia;
+    double prom_general;
+    prom_materia = 0;
+
+    printf("Nombre: %s Carrera: %s Promedio: %f Materia: %s ", alumno.nombre, alumno.carrera, alumno.promedio, alumno.materia);
+    printf("\n");
+    printf("Calificaciones: ");
+    printf("\n");
+    for (int i=0; i<4; i++) {
+        printf("%f ", alumno.calis[i]);
+        prom_materia = prom_materia + alumno.calis[i];
+    }
+    prom_materia = prom_materia/4;
+
+    printf("\n");
+    printf("\n");
+    printf("El promedio final de la materia es: " );
+    printf("%f ", prom_materia);
+
+    printf("\n");
+    printf("El promedio general es: " );
+    prom_general = (alumno.promedio + prom_materia)/2.0;
+    printf("%f ", prom_general);
+
+    printf("\n");
+    if(prom_materia >= 6.0){
+        printf("El estatus es Acreditado " );
+    }
+    else{
+        printf("El estatus es No Acreditado ");
+    }
+    printf("\n");
+    if(alumno.veces < 3 && prom_materia < 6.0){
+        printf("El alumno puede repetir materia");
+    }
+    else{
+        printf("El alumno ya no puede repetir la materia ");
+    }
+    printf("\n");
+        
 }
 void actualizar(char nombre[100]){
     FILE *arch;
@@ -100,10 +147,15 @@ void consultaArch1()
     fread(&alumno, sizeof(registro_alumno), 1, arch);
     while(!feof(arch))
     {
-        printf("%s %s %f %s %i ", alumno.nombre, alumno.carrera, alumno.promedio, alumno.materia, alumno.semestre);
+        printf("Nombre: %s Carrera: %s Promedio: %f Materia: %s Semestre: %i ", alumno.nombre, alumno.carrera, alumno.promedio, alumno.materia, alumno.semestre);
+        printf("\n");
+        printf("Calificaciones:");
+        printf("\n");
         for (int i=0; i<4; i++) {
             printf("%f ", alumno.calis[i]);
         }
+        printf("\n");
+        printf("Numero de veces: ");
         printf("%i\n", alumno.veces);
         fread(&alumno, sizeof(registro_alumno), 1, arch);
     }
@@ -129,6 +181,7 @@ void consultaArch2()
     printf("\n");
     fclose(arch);
 }
+
 int main(int argc, const char * argv[]) {
     int menu;
     char nombre[100];
@@ -145,7 +198,7 @@ int main(int argc, const char * argv[]) {
                 altaAlumnos();
                 break;
             case 2:
-                printf("2: Escribe el nombre del alumno\n");
+                printf("Escribe el nombre del alumno\n");
                 scanf("%s",nombre);
                 situacion(nombre);
                 break;
